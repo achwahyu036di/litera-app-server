@@ -14,6 +14,9 @@ def signup(user: UserSchema, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(status_code=400, detail="Email Already Registered")
     
+    password_hash = bcrypt.hashpw(user.password, bcrypt.gensalt())
+    user.password = password_hash
+    
     new_user = User(**user.dict())
     db.add(new_user)
     db.commit()
@@ -28,7 +31,11 @@ def signup(user: UserSchema, db: Session = Depends(get_db)):
 def login(user: UserSchema, db: Session = Depends(get_db)): 
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not db_user.verify_password(user.password):
-        raise HTTPException(status_code=400, detail="Invalid email or password")
+        raise HTTPException(status_code=400, detail="Invalid email")
+    
+    # decode the password
+    if not bcrypt.checkpw(user.password.encode, db_user.password):
+        raise HTTPException(status_code=400, detail="Invalid password")
     
     return api_response(
         data=db_user,
