@@ -11,5 +11,6 @@ class BookSchema(BaseModel):
     duration = Optional[int] = None
     user_rules = Optional[str] = None
     create_at = Optional[datetime]
+    user_profile = Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
