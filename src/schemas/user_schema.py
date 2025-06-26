@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, HttpUrl
 from typing import Optional
 from datetime import datetime
 
@@ -10,6 +10,7 @@ class UserSchema(BaseModel):
     address: Optional[str] = None
     telephone: Optional[str] = None
     created_at: Optional[datetime] = None
+    profile_image_url: Optional[HttpUrl] = None
 
     # set orm
     model_config = ConfigDict(from_attributes=True)

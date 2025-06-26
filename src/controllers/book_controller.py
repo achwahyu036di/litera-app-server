@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, File, HTTPException, Depends, UploadFile
 from sqlalchemy.orm import Session
 from ..models.book import Book
 from ..schemas.book_schema import BookSchema
 from ..db.database import get_db
 from ..utils.response_wrapper import api_response
+from ..utils.cloudinary_uploader import upload_image
 
 route = APIRouter()
 
@@ -57,3 +58,22 @@ def delete_book(book_id: str,  db: Session = Depends(get_db)):
     return api_response(
         message="Book deleted successfully"
     )
+
+# upload book image
+@route.post("/book/{book_id}/cover")
+def update_cover_image(
+    book_id: str,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    book = db.query(Book).filter(Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    # Upload ke folder 'book_covers' di Cloudinary
+    image_url = upload_image(file, "project_peminjaman_buku/book_covers")
+    
+    book.cover_image_url = image_url
+    db.commit()
+    db.refresh(book)
+    return book
