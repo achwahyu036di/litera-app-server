@@ -13,11 +13,8 @@ class User(Base):
     writer = Column(String(255), nullable=False)
     publiser = Column(String(255))
     isbn = Column(String(13), unique=True, nullable=False)
-    status = Column(Enum("tersedia", "dipinjam", "rusak", "hilang"), default="tersedia")
-    duration = Column(Integer)
-    user_rules = Column(Text)
-    create_at = Column(DateTime(timezone=True))
+    published_date = Column(DateTime(timezone=True), nullable=True)
+    praice_per_day = Column(Integer, nullable=True)
     image_book_url = Column(String(2048), nullable=True)
-
     
     book_owner = relationship("User", back_populates="book")
