@@ -12,7 +12,6 @@ class Borrowing(Base):
     book_id = Column(CHAR(36), ForeignKey("book.id"), nullable=False)
     borrow_date = Column(DateTime(timezone=True), nullable=False)
     return_date = Column(DateTime(timezone=True), nullable=True)
-    status = Column(String(50), default="dipinjam")  # "dipinjam", "selesai", "menunggu persetujuan", "dibatalkan", "ditolak"
     duration = Column(Integer, nullable=True)  # Duration in days
 
     user = relationship("User", back_populates="borrowings")
